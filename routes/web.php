@@ -8,8 +8,9 @@ $router->get('/', function () use ($router) {
 
 $router->post('/orcamento', 'OrcamentoController@enviar');
 
-$router->options('/{any:.*}', function () {
+$router->options('{any:.*}', function () {
     return response('', 204);
 });
+
 
 

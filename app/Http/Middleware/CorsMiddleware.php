@@ -8,18 +8,25 @@ class CorsMiddleware
 {
     public function handle($request, Closure $next)
     {
-        if ($request->getMethod() === 'OPTIONS') {
-            return response('', 204)
-                ->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Methods'     => 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials' => 'true'
+        ];
+
+        // Responde diretamente a requisições OPTIONS
+        if ($request->getMethod() === "OPTIONS") {
+            return response()->json('OK', 200, $headers);
         }
 
+        // Continua fluxo normal da aplicação
         $response = $next($request);
 
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+        // Adiciona os headers na resposta
+        foreach ($headers as $key => $value) {
+            $response->headers->set($key, $value);
+        }
 
         return $response;
     }
